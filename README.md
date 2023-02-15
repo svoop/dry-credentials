@@ -34,3 +34,104 @@ And then install the bundle:
 ```
 bundle install --trust-policy MediumSecurity
 ```
+
+## Usage
+
+Extend any class with `Dry::Credentials` to use sensible [default options](#options-and-defaults):
+
+```ruby
+class App
+  extend Dry::Credentials
+end
+```
+
+The `credentials` macro allows you to tweak these options:
+
+```ruby
+class App
+  extend Dry::Credentials
+
+  credentials do
+    env "sandbox"
+    dir "/path/to/credentials"
+  end
+end
+```
+
+Now initialize the credentials for this `env`:
+
+```ruby
+App.credentials do
+  edit
+end
+```
+
+This prints the key to encrypt and decrypt to STDOUT:
+
+```
+SANDBOX_CREDENTIALS_KEY=47de05424afadcfcbb4960135ae4592b
+```
+
+And it creates `/path/to/credentials/sandbox.yaml.enc` (where the encrypted credentials are stored) and opens this file using your favourite editor as per the `EDITOR` environment variable.
+
+For the sake of this example, let's assume you paste the following:
+
+```yml
+otp:
+  secret_key: ZcikLNiUQoqOo594oH2eqw04HPclhjkpgvpBik/40oU=
+  salt: 583506a49c71724a9f085bf2e70362df9d973f08d6575191cab6a177dfb872c6
+```
+
+When the editor is closed, the credentials are encrypted and stored.
+
+To decrypt and use them in your app, you have to set just one environment variable with the key, in this case:
+
+```sh
+export SANDBOX_CREDENTIALS_KEY=47de05424afadcfcbb4960135ae4592b
+```
+
+With this in place, you can use the decrypted credentials anywhere in your app:
+
+```ruby
+App.credentials.otp.secret_key
+# => "ZcikLNiUQoqOo594oH2eqw04HPclhjkpgvpBik/40oU="
+```
+
+## Environments
+
+Credentials are isolated into environments which most likely will, but don't necessarily have to align with the environments of the app framework you're using.
+
+By default, the current environment is read from `RACK_ENV` which encourages you to use separate keys e.g. for `production`, `development` and so forth.
+
+⚠️ For safety reasons, don't share the same key across multiple environments!
+
+## Edit Credentials
+
+This gem does not provide any CLI tools to edit the credentials. You should integrate it into your app instead e.g. with a Rake task or an extension to the CLI tool of the app framework you're using.
+
+You can explicitly pass the environment to edit:
+
+```ruby
+App.credentials do
+  edit "production"
+end
+```
+
+## Options and Defaults
+
+Option | Default | Description
+-------|---------|------------
+`env` | `ENV["RACK_ENV"]` | environment such as `development`
+`dir` | `"config/credentials"` | directory where encrypted credentials are stored
+
+## Development
+
+To install the development dependencies and then run the test suite:
+
+```
+bundle install
+bundle exec rake    # run tests once
+bundle exec guard   # run tests whenever files are modified
+```
+
+You're welcome to [submit issues](https://github.com/svoop/dry-credentials/issues) and contribute code by [forking the project and submitting pull requests](https://docs.github.com/en/get-started/quickstart/fork-a-repo).
