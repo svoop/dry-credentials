@@ -4,7 +4,7 @@ require 'debug'
 require 'pathname'
 
 require 'minitest/autorun'
-require Pathname(__dir__).join('..', 'lib', 'dry', 'credentials')
+require Pathname(__dir__).join('..', 'lib', 'dry-credentials')
 
 require 'minitest/sound'
 Minitest::Sound.success = Pathname(__dir__).join('sounds', 'success.mp3').to_s

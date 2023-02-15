@@ -5,7 +5,9 @@
 
 # Dry::Credentials
 
-Lightweight implementation of encrypted credentials.
+Manage and deploy secrets (access keys, API tokens etc) in encrypted files which can safely be committed to the code repository. To decrypt and and use them, only one environment variable containing the corresponding key is required.
+
+While similar to ActiveSupport::EncryptedConfiguration, this lightweight implementation introduces as few dependencies as necessary.
 
 * [Homepage](https://github.com/svoop/dry-credentials)
 * [API](https://www.rubydoc.info/gems/dry-credentials)
@@ -37,7 +39,7 @@ bundle install --trust-policy MediumSecurity
 
 ## Usage
 
-Extend any class with `Dry::Credentials` to use sensible [default options](#options-and-defaults):
+Extend any class with `Dry::Credentials` to use the [default config](#config-and-defaults):
 
 ```ruby
 class App
@@ -45,7 +47,7 @@ class App
 end
 ```
 
-The `credentials` macro allows you to tweak these options:
+The `credentials` macro allows you to tweak the config:
 
 ```ruby
 class App
@@ -117,9 +119,9 @@ App.credentials do
 end
 ```
 
-## Options and Defaults
+## Config and Defaults
 
-Option | Default | Description
+Config | Default | Description
 -------|---------|------------
 `env` | `ENV["RACK_ENV"]` | environment such as `development`
 `dir` | `"config/credentials"` | directory where encrypted credentials are stored

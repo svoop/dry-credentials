@@ -5,10 +5,15 @@ require_relative 'lib/dry/credentials/version'
 Gem::Specification.new do |spec|
   spec.name        = 'dry-credentials'
   spec.version     = Dry::Credentials::VERSION
-  spec.summary     = 'Lightweight implementation of encrypted credentials'
+  spec.summary     = 'A mixin to use encrypted credentials in your classes'
   spec.description = <<~END
-    Manage and deploy secrets (access keys, API tokens etc) along with the code
-    by encrypting and committing them to the repo.
+    Manage and deploy secrets (access keys, API tokens etc) in encrypted
+    files which can safely be committed to the code repository. To decrypt and
+    and use them, only one environment variable containing the corresponding key
+    is required.
+
+    While similar to ActiveSupport::EncryptedConfiguration, this lightweight
+    implementation introduces as few dependencies as necessary.
   END
   spec.authors     = ['Sven Schwyn']
   spec.email       = ['ruby@bitcetera.com']
