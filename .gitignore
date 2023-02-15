@@ -1,0 +1,9 @@
+# Ruby
+gems.locked
+pkg/*
+*.gem
+.bundle
+.yardoc
+
+# Mac
+.DS_Store
