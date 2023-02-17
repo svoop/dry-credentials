@@ -46,5 +46,33 @@ describe Dry::Credentials do
         _(config.dir).must_equal "config/credentials"
       end
     end
+
+    describe :cipher do
+      it "accepts block to write cipher and responds to cipher reader" do
+        subject.credentials { cipher "my-cipher" }
+        _(config.cipher).must_equal "my-cipher"
+      end
+
+      it "converts value to String" do
+        subject.credentials { cipher :'your-cipher'  }
+        _(config.cipher).must_equal "your-cipher"
+      end
+
+      it "defaults to aes-256-gcm" do
+        _(config.cipher).must_equal 'aes-256-gcm'
+      end
+    end
+
+    it "fails for other writers" do
+      _{ subject.credentials { foo "bar" } }.must_raise Dry::Credentials::UnrecognizedConfigError
+    end
+  end
+
+  describe :edit! do
+    context "initialize new credentials" do
+    end
+
+    context "edit existing credentials" do
+    end
   end
 end

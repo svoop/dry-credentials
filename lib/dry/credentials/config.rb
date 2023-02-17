@@ -5,10 +5,13 @@ module Dry
     class Config
       DEFAULTS = {
         env: -> { ENV['RACK_ENV'] },
-        dir: -> { 'config/credentials' }
+        dir: -> { 'config/credentials' },
+        cipher: -> { 'aes-256-gcm' },
+        digest: -> { 'sha256' },
+        serializer: -> { Marshal }
       }.freeze
 
-      %i(env dir).each do |method|
+      DEFAULTS.each_key do |method|
         define_method method do |value=nil|
           if value
             instance_variable_set("@#{method}", value.to_s)

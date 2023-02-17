@@ -63,9 +63,7 @@ end
 Now initialize the credentials for this `env`:
 
 ```ruby
-App.credentials do
-  edit
-end
+App.credentials.edit!
 ```
 
 This prints the key to encrypt and decrypt to STDOUT:
@@ -114,9 +112,7 @@ This gem does not provide any CLI tools to edit the credentials. You should inte
 You can explicitly pass the environment to edit:
 
 ```ruby
-App.credentials do
-  edit "production"
-end
+App.credentials.edit! "production"
 ```
 
 ## Config and Defaults
@@ -125,6 +121,9 @@ Config | Default | Description
 -------|---------|------------
 `env` | `ENV["RACK_ENV"]` | environment such as `development`
 `dir` | `"config/credentials"` | directory where encrypted credentials are stored
+`cipher` | `"aes-256-gcm"` | any of `OpenSSL::Cipher.ciphers`
+`digest` | `"sha256"` | sign digest used if the cipher doesn't support AEAD
+`serializer` | `Marshal` | serializer responding to `dump` and `load`
 
 ## Development
 
