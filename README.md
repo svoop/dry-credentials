@@ -39,7 +39,7 @@ bundle install --trust-policy MediumSecurity
 
 ## Usage
 
-Extend any class with `Dry::Credentials` to use the [default config](#config-and-defaults):
+Extend any class with `Dry::Credentials` to use the [default settings](#defaults):
 
 ```ruby
 class App
@@ -47,7 +47,7 @@ class App
 end
 ```
 
-The `credentials` macro allows you to tweak the config:
+The `credentials` macro allows you to tweak the settings:
 
 ```ruby
 class App
@@ -66,25 +66,25 @@ Now initialize the credentials for this `env`:
 App.credentials.edit!
 ```
 
-This prints the key to encrypt and decrypt to STDOUT:
-
-```
-SANDBOX_CREDENTIALS_KEY=47de05424afadcfcbb4960135ae4592b
-```
-
 And it creates `/path/to/credentials/sandbox.yaml.enc` (where the encrypted credentials are stored) and opens this file using your favourite editor as per the `EDITOR` environment variable.
 
-For the sake of this example, let's assume you paste the following:
+For the sake of this example, let's assume you paste the following credentials:
 
 ```yml
 otp:
   secret_key: ZcikLNiUQoqOo594oH2eqw04HPclhjkpgvpBik/40oU=
   salt: 583506a49c71724a9f085bf2e70362df9d973f08d6575191cab6a177dfb872c6
+  meta:
+    realm: main
 ```
 
-When the editor is closed, the credentials are encrypted and stored.
+When you close the editor, the credentials are encrypted and stored. This first time only, the key to encrypt and decrypt is printed to STDOUT:
 
-To decrypt and use them in your app, you have to set just one environment variable with the key, in this case:
+```
+SANDBOX_CREDENTIALS_KEY=47de05424afadcfcbb4960135ae4592b
+```
+
+To decrypt the credentials and use them in your app, you have to set just this one environment variable containing the key, in this case:
 
 ```sh
 export SANDBOX_CREDENTIALS_KEY=47de05424afadcfcbb4960135ae4592b
@@ -95,6 +95,9 @@ With this in place, you can use the decrypted credentials anywhere in your app:
 ```ruby
 App.credentials.otp.secret_key
 # => "ZcikLNiUQoqOo594oH2eqw04HPclhjkpgvpBik/40oU="
+
+App.credentials.otp.meta.name
+# => "main"
 ```
 
 ## Environments
@@ -115,15 +118,23 @@ You can explicitly pass the environment to edit:
 App.credentials.edit! "production"
 ```
 
-## Config and Defaults
+## Settings
 
-Config | Default | Description
--------|---------|------------
+If you have to, you can access the settings programmatically:
+
+```ruby
+App.credentials[:env]   # => "production"
+```
+
+### Defaults
+
+Setting | Default | Description
+--------|---------|------------
 `env` | `ENV["RACK_ENV"]` | environment such as `development`
 `dir` | `"config/credentials"` | directory where encrypted credentials are stored
 `cipher` | `"aes-256-gcm"` | any of `OpenSSL::Cipher.ciphers`
 `digest` | `"sha256"` | sign digest used if the cipher doesn't support AEAD
-`serializer` | `Marshal` | serializer responding to `dump` and `load`
+`serializer` | `"Marshal"` | serializer responding to `dump` and `load`
 
 ## Development
 

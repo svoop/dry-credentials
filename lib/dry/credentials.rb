@@ -7,23 +7,28 @@ require "base64"
 
 require_relative "credentials/version"
 require_relative "credentials/errors"
-require_relative "credentials/config"
 require_relative "credentials/encryptor"
+
+require_relative "credentials/extension/settings"
+require_relative "credentials/extension"
 
 module Dry
   module Credentials
-    attr_accessor :__credentials_config
+    attr_accessor :__credentials_extension__
 
     def credentials(&block)
-      __credentials_config.instance_eval &block
-    rescue NoMethodError
-      raise UnrecognizedConfigError
+      return __credentials_extension__ unless block
+      begin
+        __credentials_extension__.instance_eval &block
+      rescue NoMethodError
+        raise UnrecognizedSettingError
+      end
     end
 
     private
 
-    def __credentials_config
-      @__credentials_config ||= Config.new
+    def __credentials_extension__
+      @__credentials_extension__ ||= Extension.new
     end
   end
 end

@@ -8,7 +8,7 @@ module Dry
     class Encryptor
       DEFAULT_CIPHER = 'aes-256-gcm'
       DEFAULT_DIGEST = 'sha256'
-      DEFAULT_SERIALIZER = Marshal
+      DEFAULT_SERIALIZER = 'Marshal'
       SEPARATOR = '--'
 
       attr_reader :cipher
@@ -18,7 +18,8 @@ module Dry
       # @param serializer [Class] must respond to +dump+ and +load+
       def initialize(cipher: DEFAULT_CIPHER, digest: DEFAULT_DIGEST, serializer: DEFAULT_SERIALIZER)
         @cipher = OpenSSL::Cipher.new(cipher)
-        @digest, @serializer = digest, serializer
+        @digest = digest
+        @serializer = Kernel.const_get(serializer)
       end
 
       # Generate a random key with the length requird by the current cipher,
@@ -66,7 +67,7 @@ module Dry
           (aead? && decode(auth_tag).bytes.length != auth_tag_length) ||
           (!aead? && hmac(decoded_key, payload + SEPARATOR + iv) != auth_tag)
         then
-          fail Dry::Credentials::InvalidEncryptedObject
+          fail Dry::Credentials::InvalidEncryptedObjectError
         end
         cipher.iv = decode(iv)
         if aead?
@@ -78,7 +79,7 @@ module Dry
           @serializer.load(data)
         end
       rescue OpenSSL::Cipher::CipherError, TypeError, ArgumentError
-        raise Dry::Credentials::InvalidEncryptedObject
+        raise Dry::Credentials::InvalidEncryptedObjectError
       end
 
       private

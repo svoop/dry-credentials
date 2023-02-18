@@ -54,7 +54,7 @@ describe Dry::Credentials::Encryptor do
           groups = encoded.split(SEPARATOR)
           3.times do |group|
             groups[group][0] = (groups[group][0] == '0' ? '1' : '0')
-            _{ subject.decrypt(groups.join(SEPARATOR), key: key) }.must_raise Dry::Credentials::InvalidEncryptedObject
+            _{ subject.decrypt(groups.join(SEPARATOR), key: key) }.must_raise Dry::Credentials::InvalidEncryptedObjectError
           end
         end
       end

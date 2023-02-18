@@ -4,7 +4,7 @@ module Dry
   module Credentials
     Error = Class.new(::StandardError)
 
-    UnrecognizedConfigError = Class.new(Error)
-    InvalidEncryptedObject = Class.new(Error)
+    UnrecognizedSettingError = Class.new(Error)
+    InvalidEncryptedObjectError = Class.new(Error)
   end
 end
