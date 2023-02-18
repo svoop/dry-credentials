@@ -17,3 +17,7 @@ class MiniTest::Spec
     alias_method :context, :describe
   end
 end
+
+def fixtures_path
+  Pathname(__dir__).join('fixtures')
+end

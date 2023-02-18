@@ -8,6 +8,7 @@ require "base64"
 require_relative "credentials/version"
 require_relative "credentials/errors"
 require_relative "credentials/encryptor"
+require_relative "credentials/yaml"
 
 require_relative "credentials/extension/settings"
 require_relative "credentials/extension"
