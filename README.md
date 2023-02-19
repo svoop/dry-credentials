@@ -130,11 +130,11 @@ App.credentials[:env]   # => "production"
 
 Setting | Default | Description
 --------|---------|------------
-`env` | `ENV["RACK_ENV"]` | environment such as `development`
+`env` | `-> { ENV["RACK_ENV"] }` | environment such as `development`
 `dir` | `"config/credentials"` | directory where encrypted credentials are stored
 `cipher` | `"aes-256-gcm"` | any of `OpenSSL::Cipher.ciphers`
 `digest` | `"sha256"` | sign digest used if the cipher doesn't support AEAD
-`serializer` | `"Marshal"` | serializer responding to `dump` and `load`
+`serializer` | `Marshal` | serializer responding to `dump` and `load`
 
 ## Development
 

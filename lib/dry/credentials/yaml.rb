@@ -6,7 +6,7 @@ module Dry
 
       # @param string [String] YAML document content
       def initialize(string)
-        @hash = ::YAML.safe_load_file string
+        @hash = ::YAML.safe_load string
         fail Dry::Credentials::YAMLFormatError unless @hash.instance_of? Hash
       rescue Psych::DisallowedClass
         raise Dry::Credentials::YAMLFormatError

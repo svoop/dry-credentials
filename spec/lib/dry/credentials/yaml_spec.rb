@@ -6,22 +6,18 @@ describe Dry::Credentials::YAML do
       Dry::Credentials::YAML
     end
 
-    it "loads valid YAML files" do
-      _(subject.new(fixtures_path.join('credentials.yml')))
-    end
-
     it "fails on invalid YAML files" do
-      _{ subject.new(fixtures_path.join('invalid_credentials.yml')) }.must_raise Dry::Credentials::YAMLFormatError
+      _{ subject.new(fixtures_path.join('decrypted', 'invalid_credentials.yml').read) }.must_raise Dry::Credentials::YAMLFormatError
     end
 
     it "fails on unsafe YAML files" do
-      _{ subject.new(fixtures_path.join('unsafe_credentials.yml')) }.must_raise Dry::Credentials::YAMLFormatError
+      _{ subject.new(fixtures_path.join('decrypted', 'unsafe_credentials.yml').read) }.must_raise Dry::Credentials::YAMLFormatError
     end
   end
 
   describe :query do
     subject do
-      Dry::Credentials::YAML.new(fixtures_path.join('credentials.yml')).query
+      Dry::Credentials::YAML.new(fixtures_path.join('decrypted', 'credentials.yml').read).query
     end
 
     it "returns credentials on value nodes" do

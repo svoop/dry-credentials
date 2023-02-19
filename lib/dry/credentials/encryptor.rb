@@ -6,9 +6,10 @@
 module Dry
   module Credentials
     class Encryptor
+
       DEFAULT_CIPHER = 'aes-256-gcm'
       DEFAULT_DIGEST = 'sha256'
-      DEFAULT_SERIALIZER = 'Marshal'
+      DEFAULT_SERIALIZER = Marshal
       SEPARATOR = '--'
 
       attr_reader :cipher
@@ -18,8 +19,7 @@ module Dry
       # @param serializer [Class] must respond to +dump+ and +load+
       def initialize(cipher: DEFAULT_CIPHER, digest: DEFAULT_DIGEST, serializer: DEFAULT_SERIALIZER)
         @cipher = OpenSSL::Cipher.new(cipher)
-        @digest = digest
-        @serializer = Kernel.const_get(serializer)
+        @digest, @serializer = digest, serializer
       end
 
       # Generate a random key with the length requird by the current cipher,
@@ -123,6 +123,7 @@ module Dry
       def auth_tag_length
         16
       end
+
     end
   end
 end

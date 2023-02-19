@@ -9,24 +9,20 @@ require_relative "credentials/version"
 require_relative "credentials/errors"
 require_relative "credentials/encryptor"
 require_relative "credentials/yaml"
-
-require_relative "credentials/extension/settings"
+require_relative "credentials/settings"
 require_relative "credentials/extension"
 
 module Dry
   module Credentials
-    attr_accessor :__credentials_extension__
-
     def credentials(&block)
-      return __credentials_extension__ unless block
-      begin
-        __credentials_extension__.instance_eval &block
-      rescue NoMethodError
-        raise UnrecognizedSettingError
+      if block
+        __credentials_extension__
+          .instance_variable_get('@settings')
+          .instance_eval(&block)
+      else
+        __credentials_extension__
       end
     end
-
-    private
 
     def __credentials_extension__
       @__credentials_extension__ ||= Extension.new
