@@ -20,7 +20,7 @@ module Dry
           .instance_variable_get('@settings')
           .instance_eval(&block)
       else
-        __credentials_extension__
+        __credentials_extension__.load!
       end
     end
 

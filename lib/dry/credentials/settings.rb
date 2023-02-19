@@ -17,7 +17,7 @@ module Dry
       end
 
       def method_missing(key, value=nil)
-        fail Dry::Credentials::UnrecognizedSettingError unless DEFAULT_SETTINGS.has_key? key
+        fail Dry::Credentials::UnrecognizedSettingError, key unless DEFAULT_SETTINGS.has_key? key
         if value
           @settings[key] = value
         else

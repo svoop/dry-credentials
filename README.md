@@ -108,6 +108,18 @@ By default, the current environment is read from `RACK_ENV` which encourages you
 
 ⚠️ For safety reasons, don't share the same key across multiple environments!
 
+## Reload Credentials
+
+The credentials are lazy loaded when queried for the first time. After that, changes in the encrypted credentials files are not taken into account at runtime for efficiency reasons.
+
+However, you can schedule a reload:
+
+```ruby
+App.credentials.reload!
+```
+
+The reload is not done immediately but lazily the next time credentials are queried.
+
 ## Edit Credentials
 
 This gem does not provide any CLI tools to edit the credentials. You should integrate it into your app instead e.g. with a Rake task or an extension to the CLI tool of the app framework you're using.
@@ -117,6 +129,8 @@ You can explicitly pass the environment to edit:
 ```ruby
 App.credentials.edit! "production"
 ```
+
+Editing credentials implicitly schedules a `reload!`.
 
 ## Settings
 

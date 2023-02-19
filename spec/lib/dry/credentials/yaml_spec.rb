@@ -7,17 +7,19 @@ describe Dry::Credentials::YAML do
     end
 
     it "fails on invalid YAML files" do
-      _{ subject.new(fixtures_path.join('decrypted', 'invalid_credentials.yml').read) }.must_raise Dry::Credentials::YAMLFormatError
+      _{ subject.new(fixtures_path.join('decrypted', 'invalid.yml').read) }.must_raise Dry::Credentials::YAMLFormatError
     end
 
     it "fails on unsafe YAML files" do
-      _{ subject.new(fixtures_path.join('decrypted', 'unsafe_credentials.yml').read) }.must_raise Dry::Credentials::YAMLFormatError
+      _{ subject.new(fixtures_path.join('decrypted', 'unsafe.yml').read) }.must_raise Dry::Credentials::YAMLFormatError
     end
   end
 
-  describe :query do
+  describe :inject_into do
     subject do
-      Dry::Credentials::YAML.new(fixtures_path.join('decrypted', 'credentials.yml').read).query
+      Object.new.tap do |object|
+        Dry::Credentials::YAML.new(fixtures_path.join('decrypted', 'test.yml').read).inject_into(object)
+      end
     end
 
     it "returns credentials on value nodes" do
@@ -32,7 +34,7 @@ describe Dry::Credentials::YAML do
     end
 
     it "fails on undefined nodes" do
-      _{ subject.undefined }.must_raise Dry::Credentials::UndefinedError
+      _{ subject.undefined }.must_raise NoMethodError
     end
 
     describe Dry::Credentials::YAML::Query do

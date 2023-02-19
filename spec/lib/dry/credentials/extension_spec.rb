@@ -1,18 +1,20 @@
 require_relative '../../../spec_helper'
 
-class TestObject
-  extend Dry::Credentials
-end
-
 describe Dry::Credentials::Extension do
   subject do
-    TestObject.dup
+    TestApp.dup
   end
 
   describe :[] do
-    it "reads the settings" do
-      _(subject.credentials[:dir]).must_equal 'config/credentials'
+    it "reads the default settings" do
+      _(subject.credentials[:serializer]).must_equal Marshal
     end
+  end
+
+  describe :load! do
+  end
+
+  describe :reload! do
   end
 
   describe :edit! do

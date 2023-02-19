@@ -12,18 +12,20 @@ module Dry
         raise Dry::Credentials::YAMLFormatError
       end
 
-      # Get a query object to fetch the credentials using method chains.
+      # Define readers for the first level of the credentials on the
+      # given +object+.
       #
-      # @return [Dry::Credentials::YAML::Query] query object
-      def query
-        Query.new(@hash)
+      # @param [Object] object to inject the methods into
+      # @return [Array] injected methods
+      def inject_into(object)
+        Query.new(@hash).send(:inject_into, object)
       end
 
       class Query
         # @param hash [Hash] hash of hashes containing the credentials
         def initialize(hash)
           @hash = hash
-          __populate__
+          inject_into self
         end
 
         # Get all credentials below the current node as a hash.
@@ -33,22 +35,19 @@ module Dry
           @hash
         end
 
-        def method_missing(*)
-          fail Dry::Credentials::UndefinedError
-        end
-
         private
 
-        def __populate__
+        def inject_into(object)
           @hash.each do |key, value|
-            define_singleton_method key do
+            object.define_singleton_method key do
               if value.instance_of? Hash
-                self.class.new value
+                Query.new value
               else
                 value
               end
             end
           end
+          @hash.keys
         end
       end
 

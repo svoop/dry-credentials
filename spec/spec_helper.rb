@@ -21,3 +21,14 @@ end
 def fixtures_path
   Pathname(__dir__).join('fixtures')
 end
+
+ENV['TEST_CREDENTIALS_KEY'] = '6e625675397271756145726c7069775a65693046386953386a4574765061467a52574e7854687353486e593d'
+
+class TestApp
+  extend Dry::Credentials
+
+  credentials do
+    env 'test'
+    dir fixtures_path.join('encrypted').to_s
+  end
+end

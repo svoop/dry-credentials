@@ -5,8 +5,9 @@ module Dry
     Error = Class.new(::StandardError)
 
     UnrecognizedSettingError = Class.new(Error)
+    EnvNotSetError = Class.new(Error)
+    KeyNotSetError = Class.new(Error)
     InvalidEncryptedObjectError = Class.new(Error)
     YAMLFormatError = Class.new(Error)
-    UndefinedError = Class.new(Error)
   end
 end

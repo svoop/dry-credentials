@@ -40,7 +40,7 @@ module Dry
       # @return [String] encrypted and authenticated/signed string
       def encrypt(object, key:)
         cipher.encrypt
-        cipher.key = decoded_key = decode(pack(key))
+        cipher.key = decoded_key = decode(pack(key.strip))
         iv = cipher.random_iv
         cipher.auth_data = '' if aead?
         cipher.update(@serializer.dump(object)).then do |data|
@@ -61,8 +61,8 @@ module Dry
       # @return [Object] verified and decrypted object
       def decrypt(encrypted_object, key:)
         cipher.decrypt
-        cipher.key = decoded_key = decode(pack(key))
-        payload, iv, auth_tag = encrypted_object.split(SEPARATOR)
+        cipher.key = decoded_key = decode(pack(key.strip))
+        payload, iv, auth_tag = encrypted_object.strip.split(SEPARATOR)
         if auth_tag.nil? ||
           (aead? && decode(auth_tag).bytes.length != auth_tag_length) ||
           (!aead? && hmac(decoded_key, payload + SEPARATOR + iv) != auth_tag)
