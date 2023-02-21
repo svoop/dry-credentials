@@ -7,7 +7,7 @@
 
 Manage and deploy secrets (access keys, API tokens etc) in encrypted files which can safely be committed to the code repository. To decrypt and and use them, only one environment variable containing the corresponding key is required.
 
-While similar to ActiveSupport::EncryptedConfiguration, this lightweight implementation introduces as few dependencies as necessary.
+While similar in purpose to ActiveSupport::EncryptedConfiguration, this lightweight implementation doesn't introduce any dependencies.
 
 * [Homepage](https://github.com/svoop/dry-credentials)
 * [API](https://www.rubydoc.info/gems/dry-credentials)
@@ -60,13 +60,15 @@ class App
 end
 ```
 
+⚠️ The `dir` must exist and have the proper permissions set.
+
 Now initialize the credentials for this `env`:
 
 ```ruby
 App.credentials.edit!
 ```
 
-And it creates `/path/to/credentials/sandbox.yaml.enc` (where the encrypted credentials are stored) and opens this file using your favourite editor as per the `EDITOR` environment variable.
+It creates `/path/to/credentials/sandbox.yaml.enc` (where the encrypted credentials are stored) and opens this file using your favourite editor as per the `EDITOR` environment variable.
 
 For the sake of this example, let's assume you paste the following credentials:
 
@@ -81,13 +83,13 @@ otp:
 When you close the editor, the credentials are encrypted and stored. This first time only, the key to encrypt and decrypt is printed to STDOUT:
 
 ```
-SANDBOX_CREDENTIALS_KEY=47de05424afadcfcbb4960135ae4592b
+SANDBOX_CREDENTIALS_KEY=68656973716a4e706e336733377245732b6e77584c6c772b5432446532456f674767664271374a623876383d
 ```
 
 To decrypt the credentials and use them in your app, you have to set just this one environment variable containing the key, in this case:
 
 ```sh
-export SANDBOX_CREDENTIALS_KEY=47de05424afadcfcbb4960135ae4592b
+export SANDBOX_CREDENTIALS_KEY=68656973716a4e706e336733377245732b6e77584c6c772b5432446532456f674767664271374a623876383d
 ```
 
 With this in place, you can use the decrypted credentials anywhere in your app:
@@ -96,7 +98,7 @@ With this in place, you can use the decrypted credentials anywhere in your app:
 App.credentials.otp.secret_key
 # => "ZcikLNiUQoqOo594oH2eqw04HPclhjkpgvpBik/40oU="
 
-App.credentials.otp.meta.name
+App.credentials.otp.meta.realm
 # => "main"
 ```
 
@@ -104,7 +106,7 @@ App.credentials.otp.meta.name
 
 Credentials are isolated into environments which most likely will, but don't necessarily have to align with the environments of the app framework you're using.
 
-By default, the current environment is read from `RACK_ENV` which encourages you to use separate keys e.g. for `production`, `development` and so forth.
+By default, the current environment is read from `RACK_ENV`.
 
 ⚠️ For safety reasons, don't share the same key across multiple environments!
 
@@ -118,7 +120,7 @@ However, you can schedule a reload:
 App.credentials.reload!
 ```
 
-The reload is not done immediately but lazily the next time credentials are queried.
+The reload is not done immediately but the next time credentials are queried.
 
 ## Edit Credentials
 
