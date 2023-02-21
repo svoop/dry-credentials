@@ -1,7 +1,6 @@
 require_relative '../../../spec_helper'
 
 describe Dry::Credentials::Extension do
-
   subject do
     TestApp.init!
   end
@@ -65,6 +64,52 @@ describe Dry::Credentials::Extension do
         _(File.exist?("#{tmp_dir}/test.yml.enc")).must_equal true
         _(subject.credentials.added_root).must_equal 'ADDED ROOT'
         _(subject.credentials.one_root).must_equal 'ONE ROOT'
+      end
+    end
+  end
+end
+
+describe Dry::Credentials::Extension::Helpers do
+  context "no credentials file exists yet" do
+    subject do
+      TestApp.init!.credentials do
+        env 'new'
+      end.__credentials_extension__.instance_variable_get('@helpers')
+    end
+
+    describe :read_yaml do
+      it "returns an empty string" do
+        _(subject.read_yaml).must_equal ''
+      end
+    end
+
+    describe :yaml_exist? do
+      it "returns false" do
+        _(subject.yaml_exist?).must_equal false
+      end
+    end
+  end
+
+  context "credentials file exists" do
+    subject do
+      TestApp.init!.__credentials_extension__.instance_variable_get('@helpers')
+    end
+
+    describe :read_yaml do
+      it "returns the decoded YAML content of the file" do
+        _(subject.read_yaml).must_equal fixtures_path.join('decrypted', 'test.yml').read
+      end
+    end
+
+    describe :yaml_exist? do
+      it "returns true" do
+        _(subject.yaml_exist?).must_equal true
+      end
+    end
+
+    describe :variable_name do
+      it "adds postfix to env and is all upcase" do
+        _(subject.variable_name).must_equal 'TEST_CREDENTIALS_KEY'
       end
     end
   end
