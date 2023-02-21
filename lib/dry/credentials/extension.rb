@@ -15,7 +15,9 @@ module Dry
       # @api private
       # @return [self]
       def load!
-        @injected = @helpers.yaml.inject_into(self) if @injected.none?
+        if  @injected.none? && @helpers.yaml_exist?
+          @injected = Dry::Credentials::YAML.new(@helpers.read_yaml).inject_into(self)
+        end
         self
       end
 
@@ -23,7 +25,7 @@ module Dry
       #
       # @return [self]
       def reload!
-        undef_method(@injected.pop) until @injected.empty?
+        singleton_class.undef_method(@injected.pop) until @injected.empty?
         self
       end
 
@@ -32,8 +34,16 @@ module Dry
       # @param env [String] name of the env to edit the credentials for
       # @return [self]
       def edit!(env=nil)
-        puts "go edit"   # TODO:
-        self
+        create = !@helpers.yaml_exist?
+        tempfile = Tempfile.new('dryc')
+        tempfile.write @helpers.read_yaml
+        tempfile.close
+        system %Q(#{ENV['EDITOR']} "#{tempfile.path}")
+        @helpers.write_yaml File.read(tempfile.path)
+        puts [@helpers.variable_name, ENV[@helpers.variable_name]].join('=') if create
+        reload!
+      ensure
+        tempfile.unlink
       end
 
       # Query settings
@@ -51,15 +61,32 @@ module Dry
           @extension = extension
         end
 
-        def yaml
-          Dry::Credentials::YAML.new(encryptor.decrypt(encrypted_file.read, key: key))
+        def read_yaml
+          return '' unless yaml_exist?
+          encryptor.decrypt(encrypted_file.read, key: key)
+        end
+
+        def write_yaml(yaml)
+          encrypted_file.write(encryptor.encrypt(yaml, key: key))
+        end
+
+        def yaml_exist?
+          encrypted_file.exist?
+        end
+
+        def variable_name
+          env = @extension[:env] or fail Dry::Credentials::EnvNotSetError
+          "#{env.upcase}_CREDENTIALS_KEY"
         end
 
         private
 
         def key
-          env = @extension[:env] or fail Dry::Credentials::EnvNotSetError
-          ENV["#{env.upcase}_CREDENTIALS_KEY"]  or fail Dry::Credentials::KeyNotSetError
+          if yaml_exist?
+            ENV[variable_name]  or fail Dry::Credentials::KeyNotSetError
+          else
+            ENV[variable_name] = encryptor.generate_key
+          end
         end
 
         def encrypted_file

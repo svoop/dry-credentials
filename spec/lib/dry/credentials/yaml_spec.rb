@@ -23,14 +23,15 @@ describe Dry::Credentials::YAML do
     end
 
     it "returns credentials on value nodes" do
-      _(subject.main_one.string_one).must_equal 'STRING ONE'
-      _(subject.main_one.array_one).must_equal ['ELEMENT ONE', 'ELEMENT TWO']
-      _(subject.main_one.sub_one.string_two).must_equal 'STRING TWO'
-      _(subject.main_two.string_three).must_equal 'STRING THREE'
+      _(subject.one_root).must_equal 'ONE ROOT'
+      _(subject.two_root.two_string).must_equal 'TWO STRING'
+      _(subject.three_root.three_string).must_equal 'THREE STRING'
+      _(subject.three_root.three_array).must_equal ['THREE ARRAY ONE', 'THREE ARRAY TWO']
+      _(subject.three_root.three_sub.three_integer).must_equal 333
     end
 
     it "returns query object on tree nodes" do
-      _(subject.main_one).must_be_instance_of Dry::Credentials::YAML::Query
+      _(subject.three_root).must_be_instance_of Dry::Credentials::YAML::Query
     end
 
     it "fails on undefined nodes" do
@@ -40,9 +41,10 @@ describe Dry::Credentials::YAML do
     describe Dry::Credentials::YAML::Query do
       describe :to_h do
         it "returns the credentials below a tree node in a Hash" do
-          _(subject.main_one.sub_one.to_h).must_equal({ "string_two" => "STRING TWO" })
+          _(subject.three_root.three_sub.to_h).must_equal({ "three_integer" => 333 })
         end
       end
     end
   end
+
 end

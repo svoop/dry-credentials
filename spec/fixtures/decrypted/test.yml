@@ -1,10 +1,10 @@
----
-main_one:
-  string_one: STRING ONE
-  array_one:
-    - ELEMENT ONE
-    - ELEMENT TWO
-  sub_one:
-    string_two: STRING TWO
-main_two:
-  string_three: STRING THREE
+one_root: ONE ROOT
+two_root:
+  two_string: TWO STRING
+three_root:
+  three_string: THREE STRING
+  three_array:
+    - THREE ARRAY ONE
+    - THREE ARRAY TWO
+  three_sub:
+    three_integer: 333

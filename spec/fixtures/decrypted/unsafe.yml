@@ -1,3 +1,2 @@
----
 error: !ruby/exception:StandardError
   message: StandardError

@@ -2,7 +2,7 @@ require_relative '../../../spec_helper'
 
 describe Dry::Credentials::Settings do
   subject do
-    TestApp.dup
+    TestApp.init!
   end
 
   it "accepts block to write setting and responds to setting reader" do
