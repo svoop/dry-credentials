@@ -27,12 +27,24 @@ ENV['TEST_CREDENTIALS_KEY'] = '6e625675397271756145726c7069775a65693046386953386
 class TestApp
   extend Dry::Credentials
 
-  def self.init!
+  def self.init
     instance_variable_set(:'@__credentials_extension__', nil)
     credentials do
       env 'test'
       dir fixtures_path.join('encrypted').to_s
     end
     self
+  end
+end
+
+class Dir
+  module Tmpname
+    class << self
+      alias_method :original_create, :create
+
+      def create(...)
+        $latest_tmpname = original_create(...)
+      end
+    end
   end
 end

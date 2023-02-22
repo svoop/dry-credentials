@@ -2,7 +2,7 @@ require_relative '../../spec_helper'
 
 describe Dry::Credentials do
   subject do
-    TestApp.init!
+    TestApp.init
   end
 
   describe :credentials do

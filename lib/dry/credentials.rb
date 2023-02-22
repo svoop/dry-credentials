@@ -11,6 +11,7 @@ require_relative "credentials/errors"
 require_relative "credentials/encryptor"
 require_relative "credentials/yaml"
 require_relative "credentials/settings"
+require_relative "credentials/helpers"
 require_relative "credentials/extension"
 
 module Dry

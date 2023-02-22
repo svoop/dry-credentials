@@ -68,7 +68,7 @@ Now initialize the credentials for this `env`:
 App.credentials.edit!
 ```
 
-It creates `/path/to/credentials/sandbox.yaml.enc` (where the encrypted credentials are stored) and opens this file using your favourite editor as per the `EDITOR` environment variable.
+It creates `/path/to/credentials/sandbox.yml.enc` (where the encrypted credentials are stored) and opens this file using your favourite editor as per the `EDITOR` environment variable.
 
 For the sake of this example, let's assume you paste the following credentials:
 
@@ -85,6 +85,8 @@ When you close the editor, the credentials are encrypted and stored. This first 
 ```
 SANDBOX_CREDENTIALS_KEY=68656973716a4e706e336733377245732b6e77584c6c772b5432446532456f674767664271374a623876383d
 ```
+
+⚠️ In case you've entered invalid YAML, a warning will be printed and the editor reopens immediately.
 
 To decrypt the credentials and use them in your app, you have to set just this one environment variable containing the key, in this case:
 
