@@ -50,7 +50,7 @@ module Dry
         Dry::Credentials::YAML.new(yaml)
         true
       rescue Dry::Credentials::YAMLFormatError, Psych::SyntaxError => error
-        warn "WARNING: #{error.class}"
+        warn "WARNING: #{error.message}"
         false
       end
 

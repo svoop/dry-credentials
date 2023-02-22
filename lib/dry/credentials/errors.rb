@@ -2,12 +2,24 @@
 
 module Dry
   module Credentials
-    Error = Class.new(::StandardError)
+    class UnrecognizedSettingError < StandardError
+      def initialize(msg='setting not recognized') = super
+    end
 
-    UnrecognizedSettingError = Class.new(Error)
-    EnvNotSetError = Class.new(Error)
-    KeyNotSetError = Class.new(Error)
-    InvalidEncryptedObjectError = Class.new(Error)
-    YAMLFormatError = Class.new(Error)
+    class EnvNotSetError < StandardError
+      def initialize(msg='env must be set') = super
+    end
+
+    class KeyNotSetError < StandardError
+      def initialize(msg='key must be set') = super
+    end
+
+    class InvalidEncryptedObjectError < StandardError
+      def initialize(msg='corrupt encrypted object or wrong key') = super
+    end
+
+    class YAMLFormatError < StandardError
+      def initialize(msg='top level must be a dictionary') = super
+    end
   end
 end
