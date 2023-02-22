@@ -1,5 +1,9 @@
 ## Main
 
+Nothing so far
+
+## 0.1.0
+
 #### Initial implementation
 
 * Require Ruby 3.0 or newer
