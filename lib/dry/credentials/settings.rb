@@ -5,7 +5,7 @@ module Dry
     class Settings
 
       DEFAULT_SETTINGS = {
-        env: -> { ENV['RACK_ENV'] },
+        env: -> { ENV['APP_ENV'] },
         dir: 'config/credentials',
         cipher: 'aes-256-gcm',
         digest: 'sha256',

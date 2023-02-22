@@ -108,7 +108,7 @@ App.credentials.otp.meta.realm
 
 Credentials are isolated into environments which most likely will, but don't necessarily have to align with the environments of the app framework you're using.
 
-By default, the current environment is read from `RACK_ENV`.
+By default, the current environment is read from `APP_ENV`. You shouldn't use `RACK_ENV` for this, [here's why](https://github.com/rack/rack/issues/1546).
 
 ⚠️ For safety reasons, don't share the same key across multiple environments!
 
@@ -148,7 +148,7 @@ App.credentials[:env]   # => "production"
 
 Setting | Default | Description
 --------|---------|------------
-`env` | `-> { ENV["RACK_ENV"] }` | environment such as `development`
+`env` | `-> { ENV["APP_ENV"] }` | environment such as `development`
 `dir` | `"config/credentials"` | directory where encrypted credentials are stored
 `cipher` | `"aes-256-gcm"` | any of `OpenSSL::Cipher.ciphers`
 `digest` | `"sha256"` | sign digest used if the cipher doesn't support AEAD

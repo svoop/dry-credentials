@@ -1,10 +1,12 @@
 ## Main
 
-Nothing so far
+#### Breaking Changes
+
+* Fall back to `APP_ENV` instead of `RACK_ENV`
 
 ## 0.1.0
 
-#### Initial implementation
+#### Initial Implementation
 
 * Require Ruby 3.0 or newer
 * Class mixin featuring the `credentials` macro:
