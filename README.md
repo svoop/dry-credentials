@@ -164,4 +164,4 @@ bundle exec rake    # run tests once
 bundle exec guard   # run tests whenever files are modified
 ```
 
-You're welcome to [submit issues](https://github.com/svoop/dry-credentials/issues) and contribute code by [forking the project and submitting pull requests](https://docs.github.com/en/get-started/quickstart/fork-a-repo).
+You're welcome to join the [discussion forum](https://github.com/svoop/dry-credentials/discussions) to ask questions or drop feature ideas, [submit issues](https://github.com/svoop/dry-credentials/issues) you may encounter or contribute code by [forking this project and submitting pull requests](https://docs.github.com/en/get-started/quickstart/fork-a-repo).
