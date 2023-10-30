@@ -4,6 +4,10 @@
 
 * Fall back to `APP_ENV` instead of `RACK_ENV`
 
+#### Fixes
+
+* Don't re-encrypt if credentials haven't been modified
+
 ## 0.1.0
 
 #### Initial Implementation

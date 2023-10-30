@@ -36,13 +36,15 @@ module Dry
       def edit!(env=nil)
         helpers = Dry::Credentials::Helpers.new(self, env)
         create = helpers.create?
-        yaml = helpers.read_yaml
+        yaml = read_yaml = helpers.read_yaml
         begin
           yaml = helpers.edit_yaml yaml
         end until helpers.yaml_valid? yaml
-        helpers.write_yaml yaml
-        puts [helpers.key_ev, ENV[helpers.key_ev]].join('=') if create
-        reload!
+        unless yaml == read_yaml
+          helpers.write_yaml yaml
+          puts [helpers.key_ev, ENV[helpers.key_ev]].join('=') if create
+          reload!
+        end
       end
 
       # Query settings

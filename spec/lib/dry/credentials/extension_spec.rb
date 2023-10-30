@@ -85,6 +85,8 @@ describe Dry::Credentials::Extension do
     it "updates the encrypted file and reloads the credentials" do
       Dir.mktmpdir do |tmp_dir|
         FileUtils.cp(fixtures_path.join('encrypted', 'test.yml.enc'), tmp_dir)
+        original_mtime = File.mtime("#{tmp_dir}/test.yml.enc")
+        sleep 0.1
         subject.credentials do
           env 'test'
           dir tmp_dir
@@ -92,8 +94,25 @@ describe Dry::Credentials::Extension do
         ENV['EDITOR'] = 'echo "added_root: ADDED ROOT" >>'
         _{ subject.credentials.edit! }.must_be_silent
         _(File.exist?("#{tmp_dir}/test.yml.enc")).must_equal true
+        _(File.mtime("#{tmp_dir}/test.yml.enc")).wont_equal original_mtime
         _(subject.credentials.added_root).must_equal 'ADDED ROOT'
         _(subject.credentials.one_root).must_equal 'ONE ROOT'
+      end
+    end
+
+    it "doesn't update the encrypted file if no changes were made" do
+      Dir.mktmpdir do |tmp_dir|
+        FileUtils.cp(fixtures_path.join('encrypted', 'test.yml.enc'), tmp_dir)
+        original_mtime = File.mtime("#{tmp_dir}/test.yml.enc")
+        sleep 0.1
+        subject.credentials do
+          env 'test'
+          dir tmp_dir
+        end
+        ENV['EDITOR'] = 'true'
+        _{ subject.credentials.edit! }.must_be_silent
+        _(File.exist?("#{tmp_dir}/test.yml.enc")).must_equal true
+        _(File.mtime("#{tmp_dir}/test.yml.enc")).must_equal original_mtime
       end
     end
   end
