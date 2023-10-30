@@ -1,5 +1,9 @@
 ## Main
 
+Nothing so far
+
+## 0.2.0
+
 #### Breaking Changes
 
 * Fall back to `APP_ENV` instead of `RACK_ENV`
