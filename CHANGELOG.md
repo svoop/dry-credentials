@@ -1,6 +1,9 @@
 ## Main
 
-Nothing so far
+## 0.2.1
+
+* Add square brackets setter for settings
+* Explain integrations for Bridgetown, Hanami 2 and Rodbot
 
 ## 0.2.0
 

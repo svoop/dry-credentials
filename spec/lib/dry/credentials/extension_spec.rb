@@ -11,6 +11,13 @@ describe Dry::Credentials::Extension do
     end
   end
 
+  describe :[]= do
+    it "writes the settings" do
+      subject.credentials[:serializer] = String
+      _(subject.credentials[:serializer]).must_equal String
+    end
+  end
+
   describe :one_root do
     it "reads the credentials" do
       _(subject.credentials.one_root).must_equal 'ONE ROOT'

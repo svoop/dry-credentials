@@ -37,6 +37,8 @@ And then install the bundle:
 bundle install --trust-policy MediumSecurity
 ```
 
+See [Integrations](#integrations) below for how to integrate Dry::Credentials into frameworks.
+
 ## Usage
 
 Extend any class with `Dry::Credentials` to use the [default settings](#defaults):
@@ -153,6 +155,109 @@ Setting | Default | Description
 `cipher` | `"aes-256-gcm"` | any of `OpenSSL::Cipher.ciphers`
 `digest` | `"sha256"` | sign digest used if the cipher doesn't support AEAD
 `serializer` | `Marshal` | serializer responding to `dump` and `load`
+
+## Integrations
+
+### Bridgetown
+
+The [bridgetown_credentials gem](https://github.com/svoop/bridgetown_credentials) integrates Dry::Credentials into your [Bridgetown](https://www.bridgetownrb.com) site.
+
+### Hanami 2
+
+To use credentials in a [Hanami 2](https//hanami.org) app, first add this gem to the gemfile of the app and then  create a provider `config/providers/credentials.rb`:
+
+```ruby
+# frozen_string_literal: true
+
+Hanami.app.register_provider :credentials do
+  prepare do
+    require "dry-credentials"
+
+    Dry::Credentials::Extension.new.then do |credentials|
+      credentials[:env] = Hanami.env
+      credentials.load!
+      register "credentials", credentials
+    end
+  end
+end
+```
+
+You might want to add a Rake task `lib/tasks/credentials.rake` as well:
+
+```ruby
+namespace :credentials do
+  desc "Edit (or create) the encrypted credentials file"
+  task :edit, [:env] => [:environment] do |_, args|
+    Hanami.app.prepare(:credentials)
+    Hanami.app['credentials'].edit! args[:env]
+  end
+end
+```
+
+(As of Hanami 2.1, you have to [explicitly load such tasks in the Rakefile](https://github.com/hanami/hanami/issues/1375) yourself.)
+
+You can now create a new credentials file for the development environment:
+
+```
+rake credentials:edit
+```
+
+This prints the credentials key you have to set in `.env`:
+
+```
+DEVELOPMENT_CREDENTIALS_KEY=...
+```
+
+The credentials are now available anywhere you inject them:
+
+```ruby
+module MyHanamiApp
+  class ApiKeyPrinter
+    include Deps[
+      "credentials"
+    ]
+
+    def call
+      puts credentials.api_key
+    end
+  end
+end
+```
+
+You can use the credentials in other providers. Say, you want to pass the [ROM](https://rom-rb.org/) database URL (which contains the connection password) using credentials instead of settings. Simply replace `target["settings"].database_url` with `target["credentials"].database_url` and you're good to go:
+
+```ruby
+Hanami.app.register_provider :persistence, namespace: true do
+  prepare do
+    require "rom"
+
+    config = ROM::Configuration.new(:sql, target["credentials"].database_url)
+
+    register "config", config
+    register "db", config.gateways[:default].connection
+  end
+
+  (...)
+end
+```
+
+Finally, if you have trouble using the credentials in slices, you might have to [share this app component](https://www.rubydoc.info/gems/hanami/Hanami/Config#shared_app_component_keys-instance_method) in `config/app.rb`:
+
+```ruby
+module MyHanamiApp
+  class App < Hanami::App
+    config.shared_app_component_keys += ["credentials"]
+  end
+end
+```
+
+### Ruby on Rails
+
+ActiveSupport implements [encrypted configuration](https://www.rubydoc.info/gems/activesupport/ActiveSupport/EncryptedConfiguration) which is used by `rails credentials:edit` [out of the box]((https://guides.rubyonrails.org/security.html#custom-credentials)). There's no benefit from introducing an additional dependency like Dry::Credentials.
+
+### Rodbot
+
+Dry::Credentials is integrated into [Rodbot](https://github.com/svoop/rodbot) out of the box, see [the README for more](https://github.com/svoop/rodbot/blob/main/README.md#credentials).
 
 ## Development
 

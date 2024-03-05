@@ -55,6 +55,14 @@ module Dry
         @settings.send(setting)
       end
 
+      # Change settings
+      #
+      # @param setting [String] name of the setting
+      # @param value [Object] new value of the setting
+      def []=(setting, value)
+        @settings.send(setting, value)
+      end
+
     end
   end
 end
