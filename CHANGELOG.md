@@ -1,5 +1,9 @@
 ## Main
 
+Nothing so far
+
+## 0.2.1
+
 ## 0.2.1
 
 * Add square brackets setter for settings
