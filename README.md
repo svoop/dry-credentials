@@ -164,7 +164,7 @@ The [bridgetown_credentials gem](https://github.com/svoop/bridgetown_credentials
 
 ### Hanami 2
 
-To use credentials in a [Hanami 2](https//hanami.org) app, first add this gem to the gemfile of the app and then  create a provider `config/providers/credentials.rb`:
+To use credentials in a [Hanami 2](https//hanami.org) app, first add this gem to the Gemfile of the app and then create a provider `config/providers/credentials.rb`:
 
 ```ruby
 # frozen_string_literal: true
@@ -175,6 +175,8 @@ Hanami.app.register_provider :credentials do
 
     Dry::Credentials::Extension.new.then do |credentials|
       credentials[:env] = Hanami.env
+      credentials[:dir] = Hanami.app.root.join(credentials[:dir])
+      credentials[:dir].mkpath
       credentials.load!
       register "credentials", credentials
     end
@@ -182,7 +184,7 @@ Hanami.app.register_provider :credentials do
 end
 ```
 
-You might want to add a Rake task `lib/tasks/credentials.rake` as well:
+Next up are Rake tasks `lib/tasks/credentials.rake`:
 
 ```ruby
 namespace :credentials do
