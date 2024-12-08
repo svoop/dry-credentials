@@ -75,7 +75,7 @@ module Dry
         if create?
           ENV[key_ev] = encryptor.generate_key
         else
-          ENV[key_ev] or fail Dry::Credentials::KeyNotSetError
+          (ENV[key_ev] || ENV['CREDENTIALS_KEY']) or fail Dry::Credentials::KeyNotSetError
         end
       end
 

@@ -1,17 +1,21 @@
 ## Main
 
-Nothing so far
+#### Additions
+
+* Support generic fallback environment variable +CREDENTIALS_KEY+
 
 ## 0.2.1
 
 ## 0.2.1
+
+#### Additions
 
 * Add square brackets setter for settings
 * Explain integrations for Bridgetown, Hanami 2 and Rodbot
 
 ## 0.2.0
 
-#### Breaking Changes
+#### Breaking changes
 
 * Fall back to `APP_ENV` instead of `RACK_ENV`
 
@@ -21,7 +25,7 @@ Nothing so far
 
 ## 0.1.0
 
-#### Initial Implementation
+#### Initial implementation
 
 * Require Ruby 3.0 or newer
 * Class mixin featuring the `credentials` macro:

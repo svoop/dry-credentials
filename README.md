@@ -98,6 +98,12 @@ To decrypt the credentials and use them in your app, you have to set just this o
 export SANDBOX_CREDENTIALS_KEY=68656973716a4e706e336733377245732b6e77584c6c772b5432446532456f674767664271374a623876383d
 ```
 
+Alternatively, you can omit the first part of the variable name. Such a key will be used for any app environment, but a more specific key will always take precedence. This is particularly useful when working with containerized setups:
+
+```sh
+export CREDENTIALS_KEY=68656973716a4e706e336733377245732b6e77584c6c772b5432446532456f674767664271374a623876383d
+```
+
 With this in place, you can use the decrypted credentials anywhere in your app:
 
 ```ruby

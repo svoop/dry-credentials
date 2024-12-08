@@ -53,5 +53,21 @@ describe Dry::Credentials::Helpers do
         _(subject.key_ev).must_equal 'TEST_CREDENTIALS_KEY'
       end
     end
+
+    describe :key do
+      it "prefers the specific key name" do
+        substitute "ENV['CREDENTIALS_KEY']", 'ignored' do
+          _(subject.send(:key)).must_equal ENV['TEST_CREDENTIALS_KEY']
+        end
+      end
+
+      it "falls back to the generic key name" do
+        substitute "ENV['TEST_CREDENTIALS_KEY']", nil do
+          substitute "ENV['CREDENTIALS_KEY']", 'foobar' do
+            _(subject.send(:key)).must_equal 'foobar'
+          end
+        end
+      end
+    end
   end
 end

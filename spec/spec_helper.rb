@@ -6,6 +6,7 @@ require 'pathname'
 require 'minitest/autorun'
 require Pathname(__dir__).join('..', 'lib', 'dry-credentials')
 
+require 'minitest/substitute'
 require 'minitest/flash'
 require 'minitest/focus'
 
