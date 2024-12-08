@@ -1,5 +1,9 @@
 ## Main
 
+Nothing so far
+
+## 0.3.0
+
 #### Additions
 
 * Support generic fallback environment variable +CREDENTIALS_KEY+
