@@ -123,4 +123,29 @@ describe Dry::Credentials::Extension do
       end
     end
   end
+
+  describe :define! do
+    it "defines an independent dynamic secret" do
+      subject.credentials.define!(:independent_secret) { 'static after all' }
+      _(subject.credentials.independent_secret).must_equal 'static after all'
+    end
+
+    it "defines a dependent dynamic secret" do
+      subject.credentials.define!(:dependent_secret) do |credentials|
+        credentials.three_root.three_sub.three_integer + 1
+      end
+      _(subject.credentials.dependent_secret).must_equal 334
+    end
+
+    it "fails when redefining an existing key" do
+      _{ subject.credentials.define!(:two_root) }.must_raise Dry::Credentials::DefineError
+    end
+
+    it "is not affected by reloads" do
+      subject.credentials.define!(:independent_secret) { 'static after all' }
+      _(subject.credentials.independent_secret).must_equal 'static after all'
+      subject.credentials.reload!
+      _(subject.credentials.independent_secret).must_equal 'static after all'
+    end
+  end
 end

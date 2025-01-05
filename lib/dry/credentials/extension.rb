@@ -47,6 +47,20 @@ module Dry
         end
       end
 
+      # Define a dynamic secret
+      #
+      # @param key [Symbol, String] name of the dynamic secret
+      # @yield [Dry::Credentials::Extension] compose the dynamic secret using
+      #   the static credentials yielded and other inputs such as `ENV`
+      # @yieldreturn [Object] dynamic secret
+      # @raise [Types] description
+      # @return [self]
+      def define!(key, &block)
+        fail Dry::Credentials::DefineError if respond_to? key
+        define_singleton_method(key) { block.call(self) }
+        self
+      end
+
       # Query settings
       #
       # @param setting [String] name of the setting

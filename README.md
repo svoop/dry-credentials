@@ -122,7 +122,7 @@ By default, the current environment is read from `APP_ENV`. You shouldn't use `R
 
 ⚠️ For safety reasons, don't share the same key across multiple environments!
 
-## Reload Credentials
+## Reload credentials
 
 The credentials are lazy loaded when queried for the first time. After that, changes in the encrypted credentials files are not taken into account at runtime for efficiency reasons.
 
@@ -134,7 +134,7 @@ App.credentials.reload!
 
 The reload is not done immediately but the next time credentials are queried.
 
-## Edit Credentials
+## Edit credentials
 
 This gem does not provide any CLI tools to edit the credentials. You should integrate it into your app instead e.g. with a Rake task or an extension to the CLI tool of the app framework you're using.
 
@@ -145,6 +145,40 @@ App.credentials.edit! "production"
 ```
 
 Editing credentials implicitly schedules a `reload!`.
+
+## Dynamic secrets
+
+In case you have to partition secrets beyond environments, you can set dynamic secrets which are composed on the fly. Here's an example.
+
+You want to be able to connect to a shared database for the test environment, but the database URL differs whether you run the tests locally or on your favourite CI platform. To differ between the two, you set an environment variable `CONTEXT` which is either `local` or `ci` and you defined the secrets accordingly:
+
+```yaml
+database_url:
+  local: postgres://localhost:5432/example
+  ci: postgres://testuser:testpassword@remote.db.example.com:5432/example
+```
+
+To get the actual database URL, you have to:
+
+```ruby
+App.credentials.database_url.send(ENV['CONTEXT'])
+```
+
+This is okay, but it may grow a lot longer and less readable in a real app. Enter dynamic secrets which are composed according to your needs:
+
+```ruby
+App.credentials.define! :current_database_url do |credentials|
+  credentials.database_url.send(ENV['CONTEXT'])
+end
+```
+
+Dynamic secrets are then available like any other secret, however, the block is called every time you query the dynamic secret:
+
+```ruby
+App.credentials.current_database_url   # => "postgres://localhost..."
+```
+
+⚠️ Don't try to use the same key for a dynamic secret as for an existing regular one since this could create an endless loop and therefore any such attempt will raise a `Dry::Credentials::DefineError`.
 
 ## Settings
 
@@ -180,7 +214,9 @@ To use credentials in a [Hanami 2](https//hanami.org) app, first add this gem to
 Hanami.app.register_provider :credentials do
   prepare do
     require "dry-credentials"
+  end
 
+  start do
     Dry::Credentials::Extension.new.then do |credentials|
       credentials[:env] = Hanami.env
       credentials[:dir] = Hanami.app.root.join(credentials[:dir])
@@ -263,7 +299,7 @@ end
 
 ### Ruby on Rails
 
-ActiveSupport implements [encrypted configuration](https://www.rubydoc.info/gems/activesupport/ActiveSupport/EncryptedConfiguration) which is used by `rails credentials:edit` [out of the box]((https://guides.rubyonrails.org/security.html#custom-credentials)). There's no benefit from introducing an additional dependency like Dry::Credentials.
+ActiveSupport implements [encrypted configuration](https://www.rubydoc.info/gems/activesupport/ActiveSupport/EncryptedConfiguration) which is used by `rails credentials:edit` [out of the box]((https://guides.rubyonrails.org/security.html#custom-credentials)). There not much benefit from introducing Dry::Credentials as an additional dependency.
 
 ### Rodbot
 

@@ -21,5 +21,9 @@ module Dry
     class YAMLFormatError < StandardError
       def initialize(msg='top level must be a dictionary') = super
     end
+
+    class DefineError < StandardError
+      def initialize(msg='cowardly refusing to redefine existing key') = super
+    end
   end
 end
