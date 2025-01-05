@@ -1,5 +1,9 @@
 ## Main
 
+Nothing so far
+
+## 0.4.0
+
 #### Additions
 * Dynamic secrets
 
