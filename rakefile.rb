@@ -1,10 +1,8 @@
 require 'bundler/gem_tasks'
+require 'minitest/test_task'
 
-require 'rake/testtask'
-
-Rake::TestTask.new do |t|
-  t.libs << 'lib'
-  t.test_files = FileList['spec/lib/**/*_spec.rb']
+Minitest::TestTask.create(:test) do |t|
+  t.test_globs = ["spec/**/*_spec.rb"]
   t.verbose = false
   t.warning = !ENV['RUBYOPT']&.match?(/-W0/)
 end
