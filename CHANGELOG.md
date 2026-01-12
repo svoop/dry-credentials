@@ -1,6 +1,7 @@
 ## Main
 
-Nothing so far
+### Additions
+* Allow keys to be read from file e.g. `CREDENTIALS_KEY_FILE`
 
 ## 0.5.1
 

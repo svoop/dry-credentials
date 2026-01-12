@@ -72,10 +72,15 @@ module Dry
       private
 
       def key
-        if create?
+        case
+        when create?
           ENV[key_ev] = encryptor.generate_key
+        when key = ENV[key_ev] || ENV['CREDENTIALS_KEY']
+          key
+        when file = ENV["#{key_ev}_FILE"] || ENV['CREDENTIALS_KEY_FILE']
+          File.read(file)
         else
-          (ENV[key_ev] || ENV['CREDENTIALS_KEY']) or fail Dry::Credentials::KeyNotSetError
+          fail Dry::Credentials::KeyNotSetError
         end
       end
 

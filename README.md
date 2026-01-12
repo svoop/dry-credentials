@@ -94,6 +94,13 @@ Alternatively, you can omit the first part of the variable name. Such a key will
 export CREDENTIALS_KEY=68656973716a4e706e336733377245732b6e77584c6c772b5432446532456f674767664271374a623876383d
 ```
 
+You can also read keys from files which is the recommended way when using [secrets in Docker Compose](https://docs.docker.com/compose/how-tos/use-secrets/). Just append `_FILE` to the corresponding environment variable name and set it to the path from which the secret can be read, for example:
+
+```db
+export SANDBOX_CREDENTIALS_KEY_FILE=/run/secrets/sandbox_credentials_key
+export CREDENTIALS_KEY_FILE=/run/secrets/credentials_key
+```
+
 With this in place, you can use the decrypted credentials anywhere in your app:
 
 ```ruby

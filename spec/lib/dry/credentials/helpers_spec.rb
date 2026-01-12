@@ -55,16 +55,38 @@ describe Dry::Credentials::Helpers do
     end
 
     describe :key do
-      it "prefers the specific key name" do
-        substitute "ENV['CREDENTIALS_KEY']", 'ignored' do
-          _(subject.send(:key)).must_equal ENV['TEST_CREDENTIALS_KEY']
+      context "as value" do
+        it "prefers the specific key name" do
+          substitute "ENV['CREDENTIALS_KEY']", 'ignored' do
+            _(subject.send(:key)).must_equal ENV['TEST_CREDENTIALS_KEY']
+          end
+        end
+
+        it "falls back to the generic key name" do
+          substitute "ENV['TEST_CREDENTIALS_KEY']", nil do
+            substitute "ENV['CREDENTIALS_KEY']", 'foobar' do
+              _(subject.send(:key)).must_equal 'foobar'
+            end
+          end
         end
       end
 
-      it "falls back to the generic key name" do
-        substitute "ENV['TEST_CREDENTIALS_KEY']", nil do
-          substitute "ENV['CREDENTIALS_KEY']", 'foobar' do
-            _(subject.send(:key)).must_equal 'foobar'
+      context "as file" do
+        it "prefers the specific key file" do
+          substitute "ENV['TEST_CREDENTIALS_KEY']", nil do
+            substitute "ENV['TEST_CREDENTIALS_KEY_FILE']", fixtures_path.join('key_files', 'test_credentials_key').to_s do
+              substitute "ENV['CREDENTIALS_KEY_FILE']", 'ignored' do
+                _(subject.send(:key)).must_equal 'test_credentials_key secret'
+              end
+            end
+          end
+        end
+
+        it "falls back to the generic key file" do
+          substitute "ENV['TEST_CREDENTIALS_KEY']", nil do
+            substitute "ENV['CREDENTIALS_KEY_FILE']", fixtures_path.join('key_files', 'credentials_key').to_s do
+              _(subject.send(:key)).must_equal 'credentials_key secret'
+            end
           end
         end
       end
